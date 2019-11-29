@@ -1,0 +1,15 @@
+Validation Plan
+_______________________________
+
+Tasks:
+    + attach a USB Camera to the finder scope
+    + take multiple pictures of the sky to simulate a live capture
+    + interface the USB Camera to the autoguiding program on the host PC
+    + apply guiding algorithms to output motor instructions
+
+Additional Accomplishments:
+    + four test simulations created containing 10 images each
+    + primitive gui for user to watch live progress of autoguiding
+    + visual-logging file to see each image in the sequence
+    + autoselection algorithm to find a star from the center
+    + CentroidTracker class to keep track of all stars in the image
