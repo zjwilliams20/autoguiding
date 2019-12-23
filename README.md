@@ -1,5 +1,5 @@
 # Autoguiding Program
-![Orion Galaxy](
+![Orion Galaxy](/orion.jpg)
 
 ### Project Background
 The Astrophotography Camera is a four-person project that is intended to start with an existing telescope and mount without motors. The four subsystems include:
