@@ -108,6 +108,7 @@ def single_run(test, img_num, logger, lower_thresh=10):
 
     # load image from camera capture or directory
     initial_img = load_image(test, img_num, Tracker)
+    record(logger, initial_img, "Initial")
     #initial_img = Camera.capture()
 
     cv2.imshow(gui.win_name, initial_img)
@@ -116,6 +117,7 @@ def single_run(test, img_num, logger, lower_thresh=10):
 
     # locate centroids and return binary image
     Centroids, bin_img = imgproc.find_centroids(initial_img, lower_thresh)
+    record(logger, bin_img, "Binary")
 
     cv2.imshow(gui.win_name, bin_img)
     print("\t<centroids located>")
@@ -131,12 +133,13 @@ def single_run(test, img_num, logger, lower_thresh=10):
     # autoselect a star and markup image
     autosel_img = Tracker.autoselect(bin_img)
     marked_img = markup_img(autosel_img, Tracker)
+    record(logger, marked_img, "Marked")
 
     cv2.imshow(gui.win_name, marked_img)
     print("\t<trackStar selected>")
     cv2.waitKey(-1)
 
-    record(logger, [initial_img, bin_img, autosel_img], "1. Initial 2. Binary 3. Autoselect")
+    #record(logger, [initial_img, bin_img, marked_img], "1. Initial 2. Binary 3. Marked")
 
     cv2.destroyWindow(Win)
 
@@ -202,9 +205,11 @@ if __name__ == "__main__":
     Logger = setup_logger()
 
     # Guiding of single image from a specified folder
-    #single_run(Test, 1, Logger, lower_thresh=5)
+    single_run(Test, 1, Logger, lower_thresh=5)
 
     # Guiding with a folder of 10 images
-    multiple_run(Test, Logger, lower_thresh=10)
+    #multiple_run(Test, Logger, lower_thresh=10)
 
 # can you see this
+
+# or this
