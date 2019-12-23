@@ -26,15 +26,16 @@ The autoguiding program is designed to take a sequence of image captures from a 
     1. transmit rates for RA and Dec periodically
 ### Validation Plan
 **Tasks:**
-    * attach a USB Camera to the finder scope
-    * take multiple pictures of the sky to simulate a live capture
-    * interface the USB Camera to the autoguiding program on the host PC
-    * apply guiding algorithms to output motor instructions
+* attach a USB Camera to the finder scope
+* take multiple pictures of the sky to simulate a live capture
+* interface the USB Camera to the autoguiding program on the host PC
+* apply guiding algorithms to output motor instructions
+
 **Additional Accomplishments:**
-    * four test simulations created containing 10 images each
-    * primitive gui for user to watch live progress of autoguiding
-    * visual-logging file to see each image in the sequence
-    * autoselection algorithm to find a star from the center
-    * CentroidTracker class to keep track of all stars in the image
+* four test simulations created containing 10 images each
+* primitive gui for user to watch live progress of autoguiding
+* visual-logging file to see each image in the sequence
+* autoselection algorithm to find a star from the center
+* CentroidTracker class to keep track of all stars in the image
     
 ![Orion Galaxy](https://astrobrunomarshall.files.wordpress.com/2012/06/02-orion-nebula.jpg)
