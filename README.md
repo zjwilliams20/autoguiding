@@ -24,4 +24,5 @@ The autoguiding program is designed to take a sequence of image captures from a 
     1. output the rates for the RA and Dec axes respectively
 1. **USB Connection:**
     1. transmit rates for RA and Dec periodically
+    
 ![Orion Galaxy](https://astrobrunomarshall.files.wordpress.com/2012/06/02-orion-nebula.jpg)
