@@ -1,5 +1,5 @@
 # Autoguiding Program
-![Astrothots Logo](/astrothots.png)
+![Astrothots Logo](/astrothots.PNG)
 ### Project Background
 The Astrophotography Camera is a four-person project that is intended to start with an existing telescope and mount without motors. The four subsystems include:
 1. CMOS Imager - build the CMOS camera for imaging including a sensor, peltier cooling junction, and the FPGA to route sensor data.
