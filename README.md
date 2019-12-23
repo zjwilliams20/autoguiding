@@ -1,5 +1,5 @@
 # Autoguiding Program
-![Orion Galaxy](https://astrobrunomarshall.files.wordpress.com/2012/06/02-orion-nebula.jpg)
+![Astrothots Logo](/astrothots.png)
 ### Project Background
 The Astrophotography Camera is a four-person project that is intended to start with an existing telescope and mount without motors. The four subsystems include:
 1. CMOS Imager - build the CMOS camera for imaging including a sensor, peltier cooling junction, and the FPGA to route sensor data.
@@ -24,3 +24,4 @@ The autoguiding program is designed to take a sequence of image captures from a 
     1. output the rates for the RA and Dec axes respectively
 1. **USB Connection:**
     1. transmit rates for RA and Dec periodically
+![Orion Galaxy](https://astrobrunomarshall.files.wordpress.com/2012/06/02-orion-nebula.jpg)
