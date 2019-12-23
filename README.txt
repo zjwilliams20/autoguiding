@@ -1,4 +1,4 @@
-Autoguiding Program
+<h1>Autoguiding Program</h1>
 ____________________________________________________________________
 
 Author: Zach Williams
