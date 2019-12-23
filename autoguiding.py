@@ -210,6 +210,4 @@ if __name__ == "__main__":
     # Guiding with a folder of 10 images
     #multiple_run(Test, Logger, lower_thresh=10)
 
-# can you see this
-
-# or this
+# how about now
