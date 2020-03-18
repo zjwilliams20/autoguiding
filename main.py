@@ -23,3 +23,5 @@ if __name__ == "__main__":
     App.update()
 
     root.mainloop()
+
+# can you hear me?
