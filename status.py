@@ -1,9 +1,9 @@
 ##############################################################################
-#                                  state.py                             #
+#                                  status.py                                 #
 ##############################################################################
 
 ##############################################################################
-class State:
+class Status:
     """Simple container class to store information of a current autoguiding
     state including:
         + image number
@@ -28,8 +28,7 @@ class State:
 
     ####################################################################
     def __str__(self):
-        """Represent the state object as a string for printing to the GUI
-        window."""
+        """Represent the state object as a string for printing to the GUI window."""
 
         state_str = f"Image {self.img_num}" \
         "\n__________________________________________"
@@ -48,7 +47,7 @@ class State:
 
     ####################################################################
     def set(self, img_num, mode=0, COM=(0, 0), raRate=0, decRate=0):
-        """Set the fields of a State object."""
+        """Set the fields of a State object with defaults of 0."""
         self.img_num = img_num
         self.mode = mode
         self.COM = COM
@@ -57,9 +56,11 @@ class State:
 
     ####################################################################
     def set_rates(self, raRate, decRate):
+        """Set the rates accordingly."""
         self.raRate = raRate
         self.decRate = decRate
 
     ####################################################################
     def clear(self):
+        """Reset the state to the default."""
         return self.__init__()

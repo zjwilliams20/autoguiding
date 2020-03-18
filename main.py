@@ -1,27 +1,25 @@
 ##############################################################################
-#                                   autoguiding.py                           #
+#                                   main.py                                  #
 ##############################################################################
 
 import tkinter as tk
-from centroidtracker import CentroidTracker
-from controller import Controller
 from camera import Camera
+from uart import UART
 import gui
 
 ##############################################################################
-#   Possible test runs:
-#       + PHD2 Simulation Images: "test1", "test5", "test10"
-#       + USB Camera Images: "alnilam", "lamp", "mirphak", "rigel"
 if __name__ == "__main__":
 
+    # create Tk root widget
     root = tk.Tk()
     root.title('Autoguiding Program')
 
-    ct = CentroidTracker()
-    con = Controller()
+    # open the two devices, quit if either isn't connected
     cam = Camera()
+    uart = UART()
 
-    App = gui.MainApp(root, ct, con, cam)
+    # start the main application
+    App = gui.MainApp(root, cam, uart)
     App.update()
 
     root.mainloop()

@@ -5,9 +5,9 @@
 # Adapted from https://www.pyimagesearch.com/2018/07/23/simple-object-tracking-with-opencv/
 # From Adrian Rosebrock
 
-# import the necessary packages
 from scipy.spatial import distance as dist
 from collections import OrderedDict
+from status import Status
 import numpy as np
 
 ##############################################################################
@@ -18,7 +18,7 @@ class CentroidTracker:
     # Statuses
     SEARCHING = 0   # searching for guide star using autoselect()
     LOCKED =    1   # star locked in current frame
-    LOST =      2   # not implemented in current state, possible future addition
+    LOST =      2   # not implemented in current version, possible future addition
     
     # Origin (Center of image frame)
     (orgX, orgY) = (270, 265)
@@ -32,8 +32,8 @@ class CentroidTracker:
         self.nextObjectID = 0
         self.objects = OrderedDict()
         self.disappeared = OrderedDict()
-        self.trackStar = {-1:(0,0)}
-        self.mode = self.SEARCHING
+        self.status = Status()
+        self.trackID = -1
 
         # store the number of maximum consecutive frames a given
         # object is allowed to be marked as "disappeared" until we
@@ -42,19 +42,18 @@ class CentroidTracker:
 
     ####################################################################
     def __str__(self):
-        # get current trackStar information
-        currID, currCoM = self.getTrackStar()
-
         # center of mass relative to the image origin (orgX, orgY)
-        relativeCoM = (currCoM[0] - CentroidTracker.orgX, CentroidTracker.orgY - currCoM[1])
+        relativeCoM = (self.status.COM[0] - CentroidTracker.orgX, CentroidTracker.orgY - self.status.COM[1])
+        # ^ SHOULD BE WRONG, JUST NEED SELF.STATE.COM...
+
         text = "\t\tstatus: "
-        if self.mode is self.LOCKED:
+        if self.status.mode is self.LOCKED:
             text += "LOCKED"
-            text += f"\n\t\ttrackStar:\tID# {currID} " \
+            text += f"\n\t\ttrackStar:\tID# {self.trackID} " \
                     f"\n\t\t\t\t\tCoM {relativeCoM}"
-        elif self.mode is self.SEARCHING:
+        elif self.status.mode is self.SEARCHING:
             text += "SEARCHING"
-        elif self.mode is self.LOST:
+        elif self.status.mode is self.LOST:
             text += "LOST"
         return text
 
@@ -63,16 +62,6 @@ class CentroidTracker:
         """Clear the objects, disappeared, and trackStar to return a
         blank version of the CentroidTracker. (not currently implemented)."""
         return self.__init__()
-
-    ####################################################################
-    def getTrackStar(self):
-        """Return a tuple comprising the trackStar's ID and center of mass."""
-        return list(self.trackStar.items())[0]
-
-    ####################################################################
-    def setTrackStar(self, star):
-        """Set the new trackStar for the current CentroidTracker."""
-        self.trackStar = star
 
     ####################################################################
     def autoselect(self, img):
@@ -102,12 +91,13 @@ class CentroidTracker:
                 #       4. (orgX + size, orgY + size)
                 if orgX - size < centroid[0] < orgX + size \
                         and orgY - size < centroid[1] < orgY + size:
-                    # update the current trackStar and status
-                    self.setTrackStar({ID:centroid})
-                    self.mode = self.LOCKED
+                    # update the current trackStar and state mode
+                    self.trackID = ID
+                    self.status.mode = self.LOCKED
+                    self.status.COM = centroid
                     return img
 
-        self.mode = self.SEARCHING  # reset mode to SEARCHING if we can't find a star
+        self.status.mode = self.SEARCHING  # reset mode to SEARCHING if we can't find a star
         return img
 
     ####################################################################
@@ -135,33 +125,33 @@ class CentroidTracker:
         self.update_centroids(inputCentroids)
 
         # update the guiding status based on the trackStar
-        self.update_status()
+        self.update_mode()
 
         # update the trackStar center of mass
-        if self.mode is self.LOCKED:
+        if self.status.mode is self.LOCKED:
             return self.update_trackstar()
 
         # return zero displacement when SEARCHING to maintain current trajectory
         return 0, 0
 
     ####################################################################
-    def update_status(self):
+    def update_mode(self):
         """Update the status of the tracking depending on the disappearance
         of trackStar."""
 
         # if the trackStar is being tracked...
-        if self.getTrackStar()[0] in list(self.objects.keys()):
-            self.mode = self.LOCKED
+        if self.trackID in list(self.objects.keys()):
+            self.status.mode = self.LOCKED
             return
 
         # trackStar was lost for one frame, start searching (not currently implemented)
-        elif self.mode is self.LOST:
-            self.mode = self.SEARCHING
+        elif self.status.mode is self.LOST:
+            self.status.mode = self.SEARCHING
             return
 
         # trackStar is not being tracked
         else:
-            self.mode = self.SEARCHING
+            self.status.mode = self.SEARCHING
             return
 
     ####################################################################
@@ -170,11 +160,10 @@ class CentroidTracker:
         displacement from the center point to the current trackStar."""
 
         # remember the old trackStar for calculating displacement
-        oldTrackStar = self.getTrackStar()
-        (ID, oldCentroid) = (oldTrackStar[0], oldTrackStar[1])
+        (ID, oldCentroid) = self.trackID, self.status.COM
 
         # if we're currently locked onto a star...
-        if self.mode is self.LOCKED:
+        if self.status.mode is self.LOCKED:
             newCentroid = self.objects[ID]
 
             # displacement = newCentroid - centerPoint
@@ -182,12 +171,10 @@ class CentroidTracker:
                         CentroidTracker.orgY - newCentroid[1])
 
             # update the trackStar to reflect its new center of mass
-            self.setTrackStar({ID: newCentroid})
-            print(f"\t\tDisplacement: ({dx}, {dy})")
+            self.status.COM = newCentroid
             return dx, dy
         else:
-            print("\t<ERR: No star being tracked, exiting (unreachable).>")
-            exit()
+            exit("\t<ERR: No star being tracked, exiting (unreachable).>")
 
     ####################################################################
     def update_centroids(self, inputCentroids):
