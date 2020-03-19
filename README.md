@@ -2,7 +2,8 @@
 ![Astrothots Logo](/figures/astrothots.PNG)
 ### Project Background
 The Astrophotography Camera is a four-person project that is intended to start with an existing telescope and mount without motors. The four subsystems include:
-1. CMOS Imager - build the CMOS camera for imaging including a sensor, peltier cooling junction, and the FPGA to route sensor data.
+1. Imager PCB - build the PCB responsible for imaging including a sensor, peltier cooling junction, lines to route the data.
+1. FPGA Carrier Card - build the carrier card PCB to interface with the FPGA's signals, including Ethernet, SD Card, ribbon cables from the CMOS sensor.
 1. Image Processing - take the bits from the FPGA to form image files, apply filters to remove noise and add color, and apply image stacking to create one final image.
 1. Mount automation - equip the mount with motors connected to an MCU for the RA and Dec axes.
 1. Autoguiding - attach a USB Camera to the finder scope and figure out where to move the motors based on the generated images.
