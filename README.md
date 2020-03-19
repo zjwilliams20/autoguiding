@@ -28,7 +28,7 @@ The autoguiding program is designed to take a sequence of image captures from a 
     1. transmit rates for RA and Dec periodically over UART
 
 ### Using the Program
-Upon entering the program, the user will be expected to have both the USB Camera and the UART-TTL converted connected. If either of these aren't operational, the program will exit. After entering the primary loop, the user can either run with the pictures from the camera, or the sample images provided.
+Upon entering the program, the user will be expected to have both the USB Camera and the UART-TTL converter connected. If either of these aren't operational, the program will exit. After entering the primary loop, the user can either run with the pictures from the camera, or the sample images provided.
 
 With everything set up, the user can now begin exposing to continuously view the image from the USB Camera, and track the stars in view. Depending on the brightness outside, the user might have to adjust the binary threshold with the slider provided. Before the user can begin sending instructions to the mount, a calibration must be conducted. See the CalibrationMath.pdf for a more detailed explanation of this step. After successfully calibrating, the program will be operational for autoguiding with the controller.
 
