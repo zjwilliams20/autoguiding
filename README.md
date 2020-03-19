@@ -1,15 +1,15 @@
 # Autoguiding Program
 ![Astrothots Logo](/figures/astrothots.PNG)
 ### Project Background
-The Astrophotography Camera is a four-person project that is intended to start with an existing telescope and mount without motors. The four subsystems include:
-1. Imager PCB - build the PCB responsible for imaging including a sensor, peltier cooling junction, lines to route the data.
-1. FPGA Carrier Card - build the carrier card PCB to interface with the FPGA's signals, including Ethernet, SD Card, ribbon cables from the CMOS sensor.
-1. Image Processing - take the bits from the FPGA to form image files, apply filters to remove noise and add color, and apply image stacking to create one final image.
+The Astrophotography Camera is a four-person project. Its five subsystems include:
+1. Imager PCB - responsible for imaging including a CMOS sensor, peltier cooling junction, and signals to route the data to the Carrier Card
+1. FPGA Carrier Card - PCB that interfaces with the FPGA's signals, including Ethernet, SD Card, and ribbon cables from the CMOS sensor.
+1. Image Processing - takes the bits from the FPGA to form image files, apply filters to remove noise and add color, and apply image stacking to create one final image.
 1. Mount automation - equip the mount with motors connected to an MCU for the RA and Dec axes.
 1. Autoguiding - attach a USB Camera to the finder scope and figure out where to move the motors based on the generated images.
 
 ### Program Summary
-The autoguiding program is designed to take a sequence of image captures from a USB Camera as input. From the images taken from the camera, the program takes the following steps to generate motor rates:
+The autoguiding program is designed to take a sequence of image captures from a USB Camera as input. From these images, the program takes the following steps to generate motor rates:
 1. **Load Image** - either from USB Camera capture or local simulation directory
 2. **Image Processing:**
     1. crop image to get relevant camera view
@@ -30,6 +30,6 @@ The autoguiding program is designed to take a sequence of image captures from a 
 ### Using the Program
 Upon entering the program, the user will be expected to have both the USB Camera and the UART-TTL converted connected. If either of these aren't operational, the program will exit. After entering the primary loop, the user can either run with the pictures from the camera, or the sample images provided.
 
-With everything setup, the user can now begin exposing to continuously view the image from the USB Camera, and track the stars in view. Depending on the brightness outside, the user might have to adjust the binary threshold with the slider provided. Before the user can begin sending instructions to the mount, a calibration must be conducted. See the CalibrationMath.pdf for a more detailed explanation of this step. After successfully calibrating, the program will be operational for autoguiding with the controller.
+With everything set up, the user can now begin exposing to continuously view the image from the USB Camera, and track the stars in view. Depending on the brightness outside, the user might have to adjust the binary threshold with the slider provided. Before the user can begin sending instructions to the mount, a calibration must be conducted. See the CalibrationMath.pdf for a more detailed explanation of this step. After successfully calibrating, the program will be operational for autoguiding with the controller.
 
 ![Orion Galaxy](https://astrobrunomarshall.files.wordpress.com/2012/06/02-orion-nebula.jpg)
