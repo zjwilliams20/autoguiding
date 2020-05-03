@@ -3,6 +3,8 @@
 ##############################################################################
 
 import numpy as np
+import matplotlib.pyplot as plt
+import math
 
 ##############################################################################
 class Calibration:
@@ -30,9 +32,10 @@ class Calibration:
         self.conversion = np.array(([0, 0], [0, 0]))
 
         # number of samples for each motor
-        self.nSamples = 2
+        self.nSamples = 10
 
-        # motor data points
+        # motor data points, where data points are (x_i, y_i, sigma_i)
+        # and sigma_i is the amplitude of the motor rate
         self.RAmotor = np.zeros((self.nSamples, 3))
         self.DECmotor = np.zeros((self.nSamples, 3))
 
@@ -119,6 +122,7 @@ class Calibration:
         if self.state is self.IDLE:
             self.state = self.BUF_0
             self.index = 0
+            print("\t<IDLE>")
 
         # wait for 3 updates
         elif self.state is self.BUF_0 and self.index is self.SHORT_WAIT:
@@ -130,6 +134,7 @@ class Calibration:
         elif self.state is self.RA_OUT and self.index is self.nSamples:
             self.state = self.BUF_1
             self.index = 0
+            print("\t<IDLE>")
 
         # wait for 3 updates
         elif self.state is self.BUF_1 and self.index is self.SHORT_WAIT:
@@ -176,11 +181,14 @@ class Calibration:
         if RASamples is not DECSamples:
             print("<WARNING: # RASamples doesn't equal DECSamples")
 
-        aNum = np.zeros(RASamples); bNum = np.zeros(RASamples)
+        aNum = np.zeros(RASamples)
+        bNum = np.zeros(RASamples)
         sigArr = np.zeros(RASamples)
 
-        # Compute least squares to get a, b, c, and d constants
+        print(self.RAmotor)
+        print(self.DECmotor)
 
+        # Compute least squares to get a, b, c, and d constants
         for i in range(RASamples):
             aNum[i] = self.RAmotor[i][0] * self.RAmotor[i][2]
             bNum[i] = self.RAmotor[i][1] * self.RAmotor[i][2]
@@ -200,38 +208,95 @@ class Calibration:
         u, s, vh = np.linalg.svd(array, full_matrices=True)
         self.conversion = np.dot(u * s, vh)
 
-####################################################################
-def calibration_simulation():
-    """Conduct an isolated calibration simulation to verify math checks out."""
+        # negate y-axis for consistency
+        self.conversion = self.conversion * np.array(([-1, -1], [-1, -1]))
 
-    # Dummy data
-    data1 = list(range(0, -100, -10))
-    data2 = list(range(0, 100, 10))
+####################################################################
+def plot_calibration(ThetaData, PhiData, declination, tests):
+
+    # plot Calibration Data
+    fig, (ax0, ax1) = plt.subplots(ncols=2, figsize=(20, 10))
+    ax0.plot(PhiData[:, 0], PhiData[:, 1], 'rx')
+    ax0.plot(ThetaData[:, 0], ThetaData[:, 1], 'bx')
+
+    # aesthetics
+    fig.suptitle("Calibration Mathematical Validation", fontsize=16)
+    ax0.set_title(f"Calibration Data Acquisition: {declination}\u00B0 Declination")
+    ax0.legend(["\u03D5 Motor Points", "\u03B8 Motor Points", "Test Conversion Points"], loc='upper right')
+    ax0.set_ylabel("Y-Pixel Displacement")
+    ax0.set_xlabel("X-Pixel Displacement")
+    ax0.grid()
+    ax0.axhline(color='black')
+    ax0.axvline(color='black')
+
+    # generate min and max bounds by farthest point
+    thresh = 5
+    (p1x, p1y), (p2x, p2y) = ThetaData[-1][:2], PhiData[-1][:2]
+    xMin = min(p1x, p2x, 0)
+    xMax = max(p1x, p2x, 0)
+    yMin = min(p1y, p2y, 0)
+    yMax = max(p1y, p2y, 0)
+    ax0.set_xlim((xMin - thresh, xMax + thresh))
+    ax0.set_ylim((yMin - thresh, yMax + thresh))
+
+    # plot Example Test Points
+    for i in range(0, len(tests)):
+        ax1.plot(tests[i][0][0], tests[i][0][1], 'g*')
+        if tests[i][0][1] < 0:
+            yOffset = -8
+        else:
+            yOffset = 3
+        ax1.text(tests[i][0][0]-5, tests[i][0][1]+yOffset,
+                 f"({int(round(tests[i][0][0], 0))}, {int(round(tests[i][0][1], 0))})"
+                 f"\n[{int(round(tests[i][1][1], 0))}, {int(round(tests[i][1][0], 0))}]")
+        ax1.annotate('', xy=(0, 0),
+                     xytext=(tests[i][0][0], tests[i][0][1]),
+                     arrowprops=dict(arrowstyle="->"))
+    ax1.legend(["Pixel Coordinates: (x, y)\nMotor Instructions: [\u03B8, \u03D5]"])
+
+    # Aesthetics
+    ax1.set_title("Example Converted Test Points")
+    ax1.set_ylabel("Y-Pixel Displacement")
+    ax1.set_xlabel("X-Pixel Displacement")
+    ax1.grid()
+    ax1.axhline(color='black')
+    ax1.axvline(color='black')
+    ax1.set_ylim((-80, 80))
+    ax1.set_xlim((-80, 80))
+
+def calibration_simulation(dec, rot):
+    """Conduct an isolated calibration simulation to verify math checks out."""
 
     # Create calibration instance
     test = Calibration()
 
-    # Generate calibration simulation data points
-    for i in range(10):
-        test.add_data((data1[i], 0), 10, 'X')
-        test.add_data((0, data2[i]), 10, 'Y')
+    # Create Data
+    dataMotor = np.array(range(0, 100, 10))
+    dataSigma = 10 * np.ones(10)
+
+    PhiData =  [math.cos(math.radians(dec + rot)) * dataMotor, math.sin(math.radians(dec + rot)) * dataMotor, dataSigma]
+    ThetaData = [math.cos(math.radians(rot)) * dataMotor, math.sin(math.radians(rot)) * dataMotor, dataSigma]
+
+    test.DECmotor = np.transpose(np.array(ThetaData))
+    test.RAmotor = np.transpose(np.array(PhiData))
 
     # Use least squares to get conversion matrix
     test.least_squares()
 
-    # Test points
-    COMx1 = (-50, 0)
-    COMx2 = (50, 0)
-    COMy1 = (0, -50)
-    COMy2 = (0, 50)
-    COMtheta = (25, 25)
+    # Make 2 differently sized circles with three points each
+    COMs = []
+    testTheta1 = np.linspace((1/4) * math.pi, (9/4) * math.pi, num=4)
+    testTheta2 = np.linspace((3/4) * math.pi, (11/4) * math.pi, num=4)
+    for i in range(0, 3):
+        COMs.append((30 * math.cos(testTheta1[i]), 30 * math.sin(testTheta1[i])))
+        COMs.append((60 * math.cos(testTheta2[i]), 60 * math.sin(testTheta2[i])))
 
-    print(test.conversion)
-    print(f"conv(COMx1) = {np.dot(test.conversion, COMx1)}")
-    print(f"conv(COMx2) = {np.dot(test.conversion, COMx2)}")
-    print(f"conv(COMy1) = {np.dot(test.conversion, COMy1)}")
-    print(f"conv(COMy2) = {np.dot(test.conversion, COMy2)}")
-    print(f"conv(COMtheta) = {np.dot(test.conversion, COMtheta)}")
+    tests = []
+    for i in range(0, len(COMs)):
+        tests.append([COMs[i], np.dot(test.conversion, COMs[i])])
+    plot_calibration(np.transpose(ThetaData), np.transpose(PhiData), dec, tests)
 
 if __name__ == "__main__":
-    calibration_simulation()
+
+    # run calibraiton simulation at specified angle and rotation
+    calibration_simulation(45, 180)
