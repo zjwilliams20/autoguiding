@@ -67,6 +67,11 @@ class MainApp:
 
         # Secondary GUI Objects (widgets)
         #######################################################
+        # load Astrothoughts Logo
+        self.logo_img = load_logo()
+        self.logo = Label(self.frame, image=self.logo_img)
+        self.logo.pack(side=BOTTOM, anchor=S)
+
         # Binary threshold slider
         self.slider = Scale(self.frame, from_=0, to=200, orient=HORIZONTAL, length=225)
         self.slider.config(sliderlength=15, label="Binary Threshold", bg="grey25", fg="white")
@@ -76,28 +81,28 @@ class MainApp:
         # Loop button
         self.expose_img = PhotoImage(file="figures/expose.png")
         self.expose_btn = Button(self.frame, image=self.expose_img, command=self.expose_button_cb)
-        self.expose_btn.config(height=20, width=20, bg="white")
+        self.expose_btn.config(height=51, width=51, bg="white")
         self.expose_btn.pack(side="left", anchor=NW)
         self.expose_ttp = CreateToolTip(self.expose_btn, "Begin looping exposures from tracking camera")
 
         # Run button
         self.run_img = PhotoImage(file="figures/run_gs.png")
         self.run_btn = Button(self.frame, image=self.run_img, command=self.run_button_cb)
-        self.run_btn.config(height=20, width=20, bg="white")
+        self.run_btn.config(height=51, width=51, bg="white")
         self.run_btn.pack(side="left", anchor=NW)
         self.run_ttp = CreateToolTip(self.run_btn, "Start autoguiding program")
 
         # Stop button
         self.stop_img = PhotoImage(file="figures/stop_gs.png")
         self.stop_btn = Button(self.frame, image=self.stop_img, command=self.stop_button_cb)
-        self.stop_btn.config(height=20, width=20, bg="white")
+        self.stop_btn.config(height=51, width=51, bg="white")
         self.stop_btn.pack(side="left", anchor=NW)
         self.stop_ttp = CreateToolTip(self.stop_btn, "Stop looping and guiding")
 
         # Calibration button
         self.cal_img = PhotoImage(file="figures/cal_gs.png")
         self.cal_btn = Button(self.frame, image=self.cal_img, command=self.cal_button_cb)
-        self.cal_btn.config(height=20, width=20, bg="white")
+        self.cal_btn.config(height=51, width=51, bg="white")
         self.cal_btn.pack(side="left", anchor=NW)
         self.cal_ttp = CreateToolTip(self.cal_btn, "Begin calibration sequence")
 
@@ -253,7 +258,7 @@ class MainApp:
         if self.exposing:
             print("<E: no action>")
         elif not self.exposing:
-            print("<!E: start exposing>")
+            print("<start exposing>")
             self.exposing = True
 
             # if calibrated, user can now run
@@ -297,7 +302,7 @@ class MainApp:
         self.run_btn.config(image=self.run_img)
         self.stop_btn.config(image=self.stop_img)
         self.cal_btn.config(image=self.cal_img)
-        print("<S: stop all>")
+        print("<stop all>")
 
     ####################################################################
     def run_button_cb(self):
@@ -323,7 +328,7 @@ class MainApp:
         if not self.calibrated:
             if not self.calibrating:
                 if self.exposing and self.tracker.status.mode is self.tracker.LOCKED:
-                    print("<!CD, !CI, E, and LOCKED; start calibrating>")
+                    print("<start calibrating>")
                     self.cal_img = PhotoImage(file="figures/cal_gs.png")
                     self.calibrating = True
                     self.cal_btn.config(image=self.cal_img)
