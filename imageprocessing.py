@@ -120,7 +120,7 @@ def load_logo():
     (not implemented)."""
 
     initial_logo = cv2.imread("figures/astrothots.PNG")
-    scaling_factor = 0.088
+    scaling_factor = 0.09
     resized_logo = cv2.resize(initial_logo, None, fx=scaling_factor, fy=scaling_factor,
                        interpolation=cv2.INTER_LINEAR_EXACT)
     pil_img = Image.fromarray(resized_logo)
